@@ -50,9 +50,11 @@ location.
 - iOS: background `NSURLSession` with resume data, so transfers continue while the app is suspended.
 - Modular: use the whole runtime, or just the parts you need.
 
-<p align="center">
-  <img src="assets/sample_android_notification.png" alt="Android download notification" width="320"/>
-</p>
+[//]: # (<p align="center">)
+
+[//]: # (  <img src="assets/sample_android_notification.png" alt="Android download notification" width="320"/>)
+
+[//]: # (</p>)
 
 # How to use KMP File Downloader
 

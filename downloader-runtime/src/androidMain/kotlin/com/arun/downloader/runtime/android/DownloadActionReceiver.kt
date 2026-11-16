@@ -12,19 +12,25 @@ class DownloadActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val downloadIdRaw = intent.getStringExtra(DownloadNotificationManager.EXTRA_DOWNLOAD_ID) ?: return
         val downloadId = DownloadId(downloadIdRaw)
+        DownloadForegroundService.lastInteractedId = downloadIdRaw
 
-        when (intent.action) {
-            DownloadNotificationManager.ACTION_PAUSE -> {
-                CoroutineScope(Dispatchers.Default).launch {
-                    //DownloadForegroundService.downloaderInstance?.pause(downloadId)
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                when (intent.action) {
+                    DownloadNotificationManager.ACTION_PAUSE -> {
+                        DownloadForegroundService.downloaderInstance?.pause(downloadId)
+                    }
+                    DownloadNotificationManager.ACTION_RESUME -> {
+                        DownloadForegroundService.downloaderInstance?.resume(downloadId)
+                    }
+                    DownloadNotificationManager.ACTION_CANCEL -> {
+                        DownloadForegroundService.downloaderInstance?.cancel(downloadId)
+                    }
                 }
-            }
-            DownloadNotificationManager.ACTION_CANCEL -> {
-                CoroutineScope(Dispatchers.Default).launch {
-                    //DownloadForegroundService.downloaderInstance?.cancel(downloadId)
-                }
+            } finally {
+                pendingResult.finish()
             }
         }
     }
-
 }

@@ -16,6 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.arun.downloader.sample.common.DownloadScreen
 import com.arun.downloader.sample.common.PlatformDownloaderFactory
+import com.arun.downloader.runtime.android.DownloadForegroundService
+import com.arun.downloader.runtime.android.DownloadWorkManagerWorker
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 
 class MainActivity : ComponentActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -37,7 +42,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val factory = remember { PlatformDownloaderFactory(applicationContext) }
             val paths = remember { factory.resolvePaths() }
-            val downloader = remember { factory.createDownloader(paths) }
+            val downloader = remember {
+                factory.createDownloader(paths).also { instance ->
+                    DownloadForegroundService.start(applicationContext, instance)
+                }
+            }
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -45,7 +54,18 @@ class MainActivity : ComponentActivity() {
                 ) {
                     DownloadScreen(
                         downloader = downloader,
-                        paths = paths
+                        paths = paths,
+                        onEnqueueBackground = { url, fileName ->
+                            val workRequest = OneTimeWorkRequestBuilder<DownloadWorkManagerWorker>()
+                                .setInputData(
+                                    workDataOf(
+                                        DownloadWorkManagerWorker.KEY_URL to url,
+                                        DownloadWorkManagerWorker.KEY_FILE_NAME to fileName
+                                    )
+                                )
+                                .build()
+                            WorkManager.getInstance(applicationContext).enqueue(workRequest)
+                        }
                     )
                 }
             }

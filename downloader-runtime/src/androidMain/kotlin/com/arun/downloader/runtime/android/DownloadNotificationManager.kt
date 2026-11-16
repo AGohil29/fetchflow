@@ -1,6 +1,5 @@
 package com.arun.downloader.runtime.android
 
-import android.R.attr.action
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import kotlin.jvm.java
 
 class DownloadNotificationManager(
     private val context: Context
@@ -40,11 +38,12 @@ class DownloadNotificationManager(
         downloadedBytes: Long,
         totalBytes: Long?,
         progressPercent: Float?,
-        downloadId: String
+        downloadId: String,
+        isPaused: Boolean = false
     ): Notification {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(title)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setSmallIcon(if (isPaused) android.R.drawable.stat_sys_warning else android.R.drawable.stat_sys_download)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
 
@@ -56,18 +55,31 @@ class DownloadNotificationManager(
             builder.setContentText("Downloaded ${formatBytes(downloadedBytes)}")
         }
 
-        val pauseIntent = Intent(context, DownloadActionReceiver::class.java).apply {
-            action = ACTION_PAUSE
-            putExtra(EXTRA_DOWNLOAD_ID, downloadId)
+        if (isPaused) {
+            val resumeIntent = Intent(context, DownloadActionReceiver::class.java).apply {
+                action = ACTION_RESUME
+                putExtra(EXTRA_DOWNLOAD_ID, downloadId)
+            }
+            val resumePendingIntent = PendingIntent.getBroadcast(
+                context,
+                downloadId.hashCode() xor 0x3333,
+                resumeIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            builder.addAction(android.R.drawable.ic_media_play, "Resume", resumePendingIntent)
+        } else {
+            val pauseIntent = Intent(context, DownloadActionReceiver::class.java).apply {
+                action = ACTION_PAUSE
+                putExtra(EXTRA_DOWNLOAD_ID, downloadId)
+            }
+            val pausePendingIntent = PendingIntent.getBroadcast(
+                context,
+                downloadId.hashCode(),
+                pauseIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            builder.addAction(android.R.drawable.ic_media_pause, "Pause", pausePendingIntent)
         }
-
-        val pausePendingIntent = PendingIntent.getBroadcast(
-            context,
-            downloadId.hashCode(),
-            pauseIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        builder.addAction(android.R.drawable.ic_media_pause, "Pause", pausePendingIntent)
 
         val cancelIntent = Intent(context, DownloadActionReceiver::class.java).apply {
             action = ACTION_CANCEL
@@ -125,6 +137,7 @@ class DownloadNotificationManager(
     companion object {
         const val CHANNEL_ID = "download_channel_v1"
         const val ACTION_PAUSE = "com.arun.downloader.action.PAUSE"
+        const val ACTION_RESUME = "com.arun.downloader.action.RESUME"
         const val ACTION_CANCEL = "com.arun.downloader.action.CANCEL"
         const val EXTRA_DOWNLOAD_ID = "extra_download_id"
     }

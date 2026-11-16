@@ -17,10 +17,11 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class DownloadForegroundService: Service() {
+class DownloadForegroundService : Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var notificationManager: DownloadNotificationManager
     private var observationJob: Job? = null
+    private var isForegroundStarted = false
 
     override fun onCreate() {
         super.onCreate()
@@ -29,7 +30,7 @@ class DownloadForegroundService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val initialNotification = notificationManager.buildProgressNotification(
-            title = "Downloading file...",
+            title = "File Downloader Service",
             downloadedBytes = 0L,
             totalBytes = null,
             progressPercent = null,
@@ -46,10 +47,11 @@ class DownloadForegroundService: Service() {
         } else {
             startForeground(NOTIFICATION_ID, initialNotification)
         }
+        isForegroundStarted = true
 
         observeDownloader()
 
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun observeDownloader() {
@@ -59,45 +61,89 @@ class DownloadForegroundService: Service() {
         observationJob = serviceScope.launch {
             downloader.observeAll().collect { states ->
                 val activeDownloads = states.filter {
-                    it is DownloadState.Downloading || it is DownloadState.Connecting || it is DownloadState.Queued
+                    it is DownloadState.Downloading ||
+                            it is DownloadState.Connecting ||
+                            it is DownloadState.Queued ||
+                            it is DownloadState.Paused
                 }
 
                 if (activeDownloads.isEmpty()) {
-                    // No more active transfers; release foreground state and stop service
-                    stopForeground(STOP_FOREGROUND_REMOVE)
-                    stopSelf()
+                    if (isForegroundStarted) {
+                        stopForeground(STOP_FOREGROUND_REMOVE)
+                        isForegroundStarted = false
+                    }
                     return@collect
                 }
 
-                // Update foreground notification with the most active download's state
-                val primary = activeDownloads.firstOrNull { it is DownloadState.Downloading }
+                val primary = activeDownloads.firstOrNull { it.id.raw == lastInteractedId }
+                    ?: activeDownloads.firstOrNull { it is DownloadState.Downloading }
+                    ?: activeDownloads.firstOrNull { it is DownloadState.Connecting }
+                    ?: activeDownloads.firstOrNull { it is DownloadState.Queued }
                     ?: activeDownloads.first()
 
-                when (primary) {
+                val notification = when (primary) {
                     is DownloadState.Downloading -> {
                         val percent = primary.totalBytes?.let { total ->
                             if (total > 0L) (primary.downloadedBytes.toFloat() / total) * 100f else null
                         }
-                        val notification = notificationManager.buildProgressNotification(
-                            title = "Downloading file...",
+                        notificationManager.buildProgressNotification(
+                            title = "Downloading: ${primary.id.raw}",
                             downloadedBytes = primary.downloadedBytes,
                             totalBytes = primary.totalBytes,
                             progressPercent = percent,
-                            downloadId = primary.id.raw
+                            downloadId = primary.id.raw,
+                            isPaused = false
                         )
-                        notificationManager.notify(NOTIFICATION_ID, notification)
+                    }
+                    is DownloadState.Paused -> {
+                        val percent = primary.totalBytes?.let { total ->
+                            if (total > 0L) (primary.downloadedBytes.toFloat() / total) * 100f else null
+                        }
+                        notificationManager.buildProgressNotification(
+                            title = "Paused: ${primary.id.raw}",
+                            downloadedBytes = primary.downloadedBytes,
+                            totalBytes = primary.totalBytes,
+                            progressPercent = percent,
+                            downloadId = primary.id.raw,
+                            isPaused = true
+                        )
                     }
                     is DownloadState.Connecting -> {
-                        val notification = notificationManager.buildProgressNotification(
-                            title = "Connecting...",
+                        notificationManager.buildProgressNotification(
+                            title = "Connecting: ${primary.id.raw}",
                             downloadedBytes = 0L,
                             totalBytes = null,
                             progressPercent = null,
-                            downloadId = primary.id.raw
+                            downloadId = primary.id.raw,
+                            isPaused = false
                         )
-                        notificationManager.notify(NOTIFICATION_ID, notification)
                     }
-                    else -> Unit
+                    else -> {
+                        notificationManager.buildProgressNotification(
+                            title = "Queued: ${primary.id.raw}",
+                            downloadedBytes = 0L,
+                            totalBytes = null,
+                            progressPercent = null,
+                            downloadId = primary.id.raw,
+                            isPaused = false
+                        )
+                    }
+                }
+
+                if (!isForegroundStarted) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        ServiceCompat.startForeground(
+                            this@DownloadForegroundService,
+                            NOTIFICATION_ID,
+                            notification,
+                            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+                        )
+                    } else {
+                        startForeground(NOTIFICATION_ID, notification)
+                    }
+                    isForegroundStarted = true
+                } else {
+                    notificationManager.notify(NOTIFICATION_ID, notification)
                 }
             }
         }
@@ -115,6 +161,9 @@ class DownloadForegroundService: Service() {
 
         @Volatile
         var downloaderInstance: FileDownloader? = null
+
+        @Volatile
+        var lastInteractedId: String? = null
 
         fun start(context: Context, downloader: FileDownloader) {
             downloaderInstance = downloader
