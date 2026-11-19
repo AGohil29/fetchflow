@@ -77,11 +77,18 @@ actual class PlatformDownloaderFactory {
             stagingDirectory = paths.stagingDirectory
         )
 
-        return DefaultFileDownloader(
+        val downloader = DefaultFileDownloader(
             config = config,
             repository = repository,
             network = KtorNetworkTransport(httpClient),
             fileSystem = OkioDownloadFileSystem()
         )
+
+        IosAppDelegateHelper.setupNotifications(
+            downloader = downloader,
+            requestPermission = true
+        )
+
+        return downloader
     }
 }

@@ -61,4 +61,6 @@ Not recorded on iOS: ETag / Last-Modified (resume relies on iOS resume data).
 Forward `handleEventsForBackgroundURLSession` to `IosAppDelegateHelper.shared`. A handler received
 before the bridge is attached is queued and registered on `attachBridge`.
 
+To setup local notifications for download progress and actions (Pause, Resume, Cancel), see [iOS Download Notifications](ios-notifications.md).
+
 Tests: `IosBackgroundWiringReproTest` (source-level checks of wiring, resume data and persistence).
