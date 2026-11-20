@@ -135,7 +135,7 @@ class DownloadNotificationManager(
     }
 
     companion object {
-        const val CHANNEL_ID = "download_channel_v1"
+        const val CHANNEL_ID = "fetchflow_downloads"
         const val ACTION_PAUSE = "io.github.agohil29.fetchflow.action.PAUSE"
         const val ACTION_RESUME = "io.github.agohil29.fetchflow.action.RESUME"
         const val ACTION_CANCEL = "io.github.agohil29.fetchflow.action.CANCEL"

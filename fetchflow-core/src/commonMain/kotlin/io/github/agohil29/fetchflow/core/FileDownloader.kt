@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * The primary public entry point for the KMP File Downloader library.
+ * The primary public entry point for the FetchFlow library.
  *
  * Provides thread-safe, coroutine-native download management across Android, iOS, and Desktop.
  * Implementations manage persistent queueing, resumable transfers, network backoff,

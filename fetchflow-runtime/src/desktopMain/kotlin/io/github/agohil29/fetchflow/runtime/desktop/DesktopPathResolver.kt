@@ -22,7 +22,7 @@ object DesktopPathResolver {
         }
     }
 
-    fun getDefaultDatabaseDirectory(appName: String = "KmpFileDownloader"): Path {
+    fun getDefaultDatabaseDirectory(appName: String = "FetchFlow"): Path {
         val userHome = System.getProperty("user.home") ?: "."
         val osName = System.getProperty("os.name", "").lowercase()
 

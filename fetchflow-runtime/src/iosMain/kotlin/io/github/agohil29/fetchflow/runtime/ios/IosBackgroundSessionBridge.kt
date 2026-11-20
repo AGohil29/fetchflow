@@ -339,7 +339,7 @@ class IosBackgroundSessionBridge(
     }
 
     private fun stageSystemTempFile(systemTemp: String, taskId: Long): Path? {
-        val dir = (stagingDirectory / ".downloader_staging").toString()
+        val dir = (stagingDirectory / ".fetchflow_staging").toString()
         val target = "$dir/bg_$taskId.tmp"
         val fm = NSFileManager.defaultManager
         fm.createDirectoryAtPath(dir, withIntermediateDirectories = true, attributes = null, error = null)

@@ -197,7 +197,7 @@ class ResumeRetryRequestLossReproTest {
         awaitState(id, "FAILED")
 
         // Simulate a corrupt 4-byte prefix left behind by the interrupted attempt.
-        val part = stagingDir / ".downloader_staging" / "${id.raw}.part"
+        val part = stagingDir / ".fetchflow_staging" / "${id.raw}.part"
         fakeFs.createDirectories(part.parent!!)
         fakeFs.write(part) { write("EVIL".encodeToByteArray()) }
         // A ranged resume requires a strong validator to have been recorded.
@@ -236,7 +236,7 @@ class ResumeRetryRequestLossReproTest {
         val id = downloader.enqueue(request())
         awaitState(id, "FAILED")
 
-        val part = stagingDir / ".downloader_staging" / "${id.raw}.part"
+        val part = stagingDir / ".fetchflow_staging" / "${id.raw}.part"
         fakeFs.createDirectories(part.parent!!)
         fakeFs.write(part) { write(goodPayload.copyOfRange(0, 4)) }
         // A ranged resume requires a strong validator to have been recorded.

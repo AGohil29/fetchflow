@@ -93,7 +93,7 @@ class DownloadTaskTest {
     @Test
     fun successfulDownloadExecutesTwoPhaseCommitAndMarksCompleted() = runTest(testDispatcher) {
         val id = DownloadId("dl_engine_01")
-        val sampleBytes = "Hello KMP File Downloader Engine".encodeToByteArray()
+        val sampleBytes = "Hello FetchFlow Engine".encodeToByteArray()
         val request = DownloadRequest(
             url = "https://mock.com/hello.txt",
             destinationDirectory = baseDestinationDir,
@@ -130,7 +130,7 @@ class DownloadTaskTest {
 
             // Confirm destination file exists & temporary part file is cleaned up
             fakeFileSystem.exists(baseDestinationDir / "hello.txt") shouldBe true
-            fakeFileSystem.exists(baseStagingDir / ".downloader_staging" / "${id.raw}.part") shouldBe false
+            fakeFileSystem.exists(baseStagingDir / ".fetchflow_staging" / "${id.raw}.part") shouldBe false
 
             // Confirm database records state as COMPLETED
             val record = repository.getById(id)

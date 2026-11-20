@@ -79,7 +79,7 @@ class HttpRangeResumeTest {
     @Test
     fun resumeWith206AppendsRemainingBytesAndCompletes() = runTest(testDispatcher) {
         val id = DownloadId("dl_resume_206")
-        val stagingPart = baseStagingDir / ".downloader_staging" / "${id.raw}.part"
+        val stagingPart = baseStagingDir / ".fetchflow_staging" / "${id.raw}.part"
         fakeFileSystem.createDirectories(stagingPart.parent!!)
 
         // Existing partial file on disk: first 10 bytes ("0123456789")
@@ -156,7 +156,7 @@ class HttpRangeResumeTest {
     @Test
     fun serverReturns200OnRangeRequestTruncatesPartialFileAndRestarts() = runTest(testDispatcher) {
         val id = DownloadId("dl_resume_fallback_200")
-        val stagingPart = baseStagingDir / ".downloader_staging" / "${id.raw}.part"
+        val stagingPart = baseStagingDir / ".fetchflow_staging" / "${id.raw}.part"
         fakeFileSystem.createDirectories(stagingPart.parent!!)
 
         // Existing partial file contains stale bytes
@@ -236,7 +236,7 @@ class HttpRangeResumeTest {
     }
 
     private suspend fun prepare(id: DownloadId, fileName: String, staged: String?, total: Long?, etag: String?): DownloadRequest {
-        val stagingPart = baseStagingDir / ".downloader_staging" / "${id.raw}.part"
+        val stagingPart = baseStagingDir / ".fetchflow_staging" / "${id.raw}.part"
         fakeFileSystem.createDirectories(stagingPart.parent!!)
         if (staged != null) {
             downloadFileSystem.sink(stagingPart, append = false).buffer().use { it.write(staged.encodeToByteArray()) }

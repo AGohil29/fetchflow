@@ -237,7 +237,7 @@ class DefaultFileDownloader(
     }
 
     private fun stagingPartFile(id: DownloadId) =
-        config.stagingDirectory / ".downloader_staging" / "${id.raw}.part"
+        config.stagingDirectory / ".fetchflow_staging" / "${id.raw}.part"
 
     override suspend fun pauseGroup(groupName: String) {
         val records = repository.getByGroup(groupName)

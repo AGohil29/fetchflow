@@ -67,7 +67,7 @@ class CancelPurgesPartFileReproTest {
         scopes.forEach { it.cancel() }
     }
 
-    private fun partFile(id: DownloadId) = stagingDir / ".downloader_staging" / "${id.raw}.part"
+    private fun partFile(id: DownloadId) = stagingDir / ".fetchflow_staging" / "${id.raw}.part"
 
     private fun newDownloader(network: NetworkTransport): DefaultFileDownloader {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default).also { scopes += it }

@@ -6,7 +6,7 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 
 actual class DatabaseDriverFactory(
     private val context: Context,
-    private val dbName: String = "downloader_metadata.db"
+    private val dbName: String = "fetchflow.db"
 ) {
     actual fun createDriver(): SqlDriver {
         return AndroidSqliteDriver(

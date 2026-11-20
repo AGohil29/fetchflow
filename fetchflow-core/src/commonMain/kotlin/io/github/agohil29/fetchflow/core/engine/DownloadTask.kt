@@ -53,7 +53,7 @@ class DownloadTask(
         var bufferedSink: okio.BufferedSink? = null
         var response: NetworkResponse? = null
 
-        val stagingDir = stagingDirectory / ".downloader_staging"
+        val stagingDir = stagingDirectory / ".fetchflow_staging"
         fileSystem.createDirectories(stagingDir)
         val stagingPartFile = stagingDir / "${id.raw}.part"
 
