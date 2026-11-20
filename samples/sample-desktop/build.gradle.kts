@@ -33,14 +33,14 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.arun.downloader.sample.desktop.MainKt"
+        mainClass = "io.github.agohil29.fetchflow.sample.desktop.MainKt"
         nativeDistributions {
             targetFormats(
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
             )
-            packageName = "com.arun.downloader.sample.desktop"
+            packageName = "io.github.agohil29.fetchflow.sample.desktop"
             packageVersion = "1.0.0"
         }
     }

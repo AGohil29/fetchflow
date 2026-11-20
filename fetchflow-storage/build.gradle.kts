@@ -9,7 +9,7 @@ val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 sqldelight {
     databases {
         create("DownloadDatabase") {
-            packageName.set("com.arun.downloader.storage.db")
+            packageName.set("io.github.agohil29.fetchflow.storage.db")
             schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
             verifyMigrations.set(true)
         }

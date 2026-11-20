@@ -77,7 +77,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.arun.downloader.runtime"
+    namespace = "io.github.agohil29.fetchflow.runtime"
     compileSdk = 36
 
     defaultConfig {

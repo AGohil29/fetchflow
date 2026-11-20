@@ -85,7 +85,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.arun.downloader.sample.common"
+    namespace = "io.github.agohil29.fetchflow.sample.common"
     compileSdk = 36
 
     defaultConfig {

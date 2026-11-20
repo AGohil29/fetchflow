@@ -10,7 +10,7 @@
 
     <application>
         <service
-            android:name="com.arun.downloader.runtime.android.DownloadForegroundService"
+            android:name="io.github.agohil29.fetchflow.runtime.android.DownloadForegroundService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
@@ -20,11 +20,11 @@
             tools:node="merge" />
 
         <receiver
-            android:name="com.arun.downloader.runtime.android.DownloadActionReceiver"
+            android:name="io.github.agohil29.fetchflow.runtime.android.DownloadActionReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.arun.downloader.action.PAUSE" />
-                <action android:name="com.arun.downloader.action.CANCEL" />
+                <action android:name="io.github.agohil29.fetchflow.action.PAUSE" />
+                <action android:name="io.github.agohil29.fetchflow.action.CANCEL" />
             </intent-filter>
         </receiver>
 

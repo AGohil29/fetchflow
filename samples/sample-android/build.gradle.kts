@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.arun.downloader.sample.android"
+    namespace = "io.github.agohil29.fetchflow.sample.android"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.arun.downloader.sample.android"
+        applicationId = "io.github.agohil29.fetchflow.sample.android"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

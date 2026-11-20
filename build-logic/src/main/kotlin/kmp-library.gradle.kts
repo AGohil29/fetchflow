@@ -10,8 +10,8 @@ plugins {
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 extensions.configure<LibraryExtension> {
-    // Unique per module: fetchflow-core -> com.arun.downloader.core, etc.
-    namespace = "com.arun.downloader.${project.name.removePrefix("fetchflow-").replace('-', '.')}"
+    // Unique per module: fetchflow-core -> io.github.agohil29.fetchflow.core, etc.
+    namespace = "io.github.agohil29.fetchflow.${project.name.removePrefix("fetchflow-").replace('-', '.')}"
     compileSdk = 36
     defaultConfig {
         minSdk = 24
