@@ -1,6 +1,6 @@
 # iOS Local Download Notifications Integration
 
-`downloader-runtime` provides built-in support for displaying local notifications on iOS during file downloads, featuring progress updates, interactive notification action buttons (**Pause**, **Resume**, **Cancel**), and completion/failure alert banners with sound.
+`fetchflow-runtime` provides built-in support for displaying local notifications on iOS during file downloads, featuring progress updates, interactive notification action buttons (**Pause**, **Resume**, **Cancel**), and completion/failure alert banners with sound.
 
 ---
 
@@ -24,7 +24,7 @@ In your iOS application's Swift entry point or AppDelegate:
 
 ```swift
 import SwiftUI
-import DownloaderRuntime
+import FetchFlow
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(

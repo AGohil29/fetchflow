@@ -1,27 +1,27 @@
-# `downloader-network` Module
+# `fetchflow-network` Module
 
-This document explains the new `downloader-network` module: what each file does, how the
-pieces fit together, and how it depends on `downloader-core`. It covers all the files added or
+This document explains the new `fetchflow-network` module: what each file does, how the
+pieces fit together, and how it depends on `fetchflow-core`. It covers all the files added or
 changed as part of introducing HTTP networking support (Ktor-based streaming downloads with
 byte-range/resume support and error mapping into `DownloadError`).
 
 ## Module overview
 
 ```
-downloader-network/
+fetchflow-network/
 ├── build.gradle.kts
 └── src/
-    ├── commonMain/kotlin/com/arun/downloader/network/
+    ├── commonMain/kotlin/io/github/agohil29/fetchflow/network/
     │   ├── NetworkTransport.kt
     │   ├── NetworkClientFactory.kt
     │   ├── KtorNetworkTransport.kt
     │   └── model/
     │       └── NetworkModels.kt
-    └── commonTest/kotlin/com/arun/downloader/network/
+    └── commonTest/kotlin/io/github/agohil29/fetchflow/network/
         └── KtorNetworkTransportTest.kt
 ```
 
-`downloader-network` depends on `downloader-core` (for `DownloadError`) and on Ktor's
+`fetchflow-network` depends on `fetchflow-core` (for `DownloadError`) and on Ktor's
 multiplatform HTTP client (`ktor-client-core`, with `okhttp`/`cio`/`darwin` engines per
 platform). It is the layer responsible for issuing HTTP(S) requests, streaming response bodies,
 and translating transport-level failures (timeouts, HTTP status codes, I/O errors) into the
@@ -32,7 +32,7 @@ exceptions.
 
 Configures the Kotlin Multiplatform source sets for the module:
 
-- **`commonMain`**: depends on `downloader-core` (for `DownloadError`) and
+- **`commonMain`**: depends on `fetchflow-core` (for `DownloadError`) and
   `ktor-client-core` (the multiplatform HTTP client API).
 - **`androidMain`**: adds `ktor-client-okhttp`, the OkHttp-backed engine used on Android.
 - **`desktopMain`**: adds `ktor-client-cio`, the pure-Kotlin coroutine-based engine used on
@@ -181,7 +181,7 @@ Together these tests validate streaming behavior, resume/range support, and the 
 
 ## Related changes in other modules
 
-### `downloader-core/src/commonMain/.../model/DownloadError.kt`
+### `fetchflow-core/src/commonMain/.../model/DownloadError.kt`
 
 `DownloadError` was changed from a `sealed interface` to a `sealed class` that extends
 `Exception`:
@@ -193,7 +193,7 @@ sealed class DownloadError(
 ) : Exception(message, cause)
 ```
 
-- **Why**: `downloader-network` needs to `throw` `DownloadError` instances directly (see
+- **Why**: `fetchflow-network` needs to `throw` `DownloadError` instances directly (see
   `KtorNetworkTransport.mapAndThrowHttpError`/`mapNetworkException`). A `sealed interface`
   cannot be thrown with `throw`, so the type had to become a `Throwable`/`Exception` subtype.
   `Retryable` and `NonRetryable` changed from `sealed interface` to `sealed class` for the same
@@ -210,10 +210,10 @@ sealed class DownloadError(
   unchanged since it is still a `sealed` hierarchy; the only difference is that instances are
   now also valid `Throwable`s.
 
-### `downloader-core/build.gradle.kts`
+### `fetchflow-core/build.gradle.kts`
 
-Removed the `implementation(project(":downloader-network"))` dependency from `downloader-core`.
-`downloader-core` defines domain models/state machine and must not depend on the networking
-layer — instead, `downloader-network` depends on `downloader-core` (the correct direction, since
+Removed the `implementation(project(":fetchflow-network"))` dependency from `fetchflow-core`.
+`fetchflow-core` defines domain models/state machine and must not depend on the networking
+layer — instead, `fetchflow-network` depends on `fetchflow-core` (the correct direction, since
 `KtorNetworkTransport` needs `DownloadError`). This removes what would otherwise be a circular
 module dependency.

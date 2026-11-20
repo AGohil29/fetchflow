@@ -1,6 +1,6 @@
-# `downloader-runtime` Module
+# `fetchflow-runtime` Module
 
-This document explains the `downloader-runtime` module: why it exists, how it replaced three
+This document explains the `fetchflow-runtime` module: why it exists, how it replaced three
 separate platform-specific modules, and what `DownloadTaskTest` verifies.
 
 ## Consolidation: three modules → one
@@ -8,9 +8,9 @@ separate platform-specific modules, and what `DownloadTaskTest` verifies.
 Previously there were three near-empty platform-specific runtime shells:
 
 ```
-downloader-runtime-android/   (androidMain only)
-downloader-runtime-desktop/   (jvmMain only — unused; convention is desktopMain)
-downloader-runtime-ios/       (iosMain only)
+fetchflow-runtime-android/   (androidMain only)
+fetchflow-runtime-desktop/   (jvmMain only — unused; convention is desktopMain)
+fetchflow-runtime-ios/       (iosMain only)
 ```
 
 Each had an identical `build.gradle.kts`:
@@ -23,7 +23,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":downloader-core"))
+            implementation(project(":fetchflow-core"))
         }
     }
 }
@@ -34,34 +34,34 @@ already configures **all** platform targets (`androidTarget()`, `jvm("desktop")`
 `iosArm64()`, `iosSimulatorArm64()`) for *any* module that applies it — so splitting the runtime
 into per-platform modules provided no isolation benefit and only added maintenance overhead
 (three build files, three `settings.gradle.kts` entries, no shared test surface). Every other
-module in the repo (`downloader-core`, `downloader-filesystem`, `downloader-storage`,
-`downloader-network`) already follows the "one module, multiple source sets" pattern.
+module in the repo (`fetchflow-core`, `fetchflow-filesystem`, `fetchflow-storage`,
+`fetchflow-network`) already follows the "one module, multiple source sets" pattern.
 
-**Change made**: the three modules were removed and replaced with a single `downloader-runtime`
+**Change made**: the three modules were removed and replaced with a single `fetchflow-runtime`
 module containing `androidMain`, `desktopMain`, and `iosMain` source sets (matching the naming
 convention used elsewhere), and `settings.gradle.kts` was updated accordingly:
 
 ```diff
-- include(":downloader-runtime-desktop")
-- include(":downloader-runtime-android")
-- include(":downloader-runtime-ios")
-+ include(":downloader-runtime")
+- include(":fetchflow-runtime-desktop")
+- include(":fetchflow-runtime-android")
+- include(":fetchflow-runtime-ios")
++ include(":fetchflow-runtime")
 ```
 
 ## Current role: integration test harness
 
 The module's `build.gradle.kts` now depends on **all** adapter modules, not just
-`downloader-core`:
+`fetchflow-core`:
 
 ```kotlin
 kotlin {
     applyDefaultHierarchyTemplate()
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":downloader-core"))
-            implementation(project(":downloader-storage"))
-            implementation(project(":downloader-network"))
-            implementation(project(":downloader-filesystem"))
+            implementation(project(":fetchflow-core"))
+            implementation(project(":fetchflow-storage"))
+            implementation(project(":fetchflow-network"))
+            implementation(project(":fetchflow-filesystem"))
             implementation(libs.findLibrary("ktor-client-core").get())
         }
         commonTest.dependencies {
@@ -86,15 +86,15 @@ kotlin {
 }
 ```
 
-This makes `downloader-runtime` the one place in the codebase where **all four modules are wired
+This makes `fetchflow-runtime` the one place in the codebase where **all four modules are wired
 together** and exercised as a whole — it hosts
-[`DownloadTaskTest`](../../downloader-runtime/src/desktopTest/kotlin/com/arun/downloader/runtime/engine/DownloadTaskTest.kt),
-which constructs a real `DownloadTask` (from `downloader-core`) using:
+[`DownloadTaskTest`](../../fetchflow-runtime/src/desktopTest/kotlin/io/github/agohil29/fetchflow/runtime/engine/DownloadTaskTest.kt),
+which constructs a real `DownloadTask` (from `fetchflow-core`) using:
 
 - a real `DownloadStateMachine`
-- a real `SqlDelightDownloadRepository` (from `downloader-storage`) backed by an in-memory SQLite
+- a real `SqlDelightDownloadRepository` (from `fetchflow-storage`) backed by an in-memory SQLite
   DB (`JdbcSqliteDriver.IN_MEMORY`)
-- an `OkioDownloadFileSystem` (from `downloader-filesystem`) backed by `okio.fakefilesystem.FakeFileSystem`
+- an `OkioDownloadFileSystem` (from `fetchflow-filesystem`) backed by `okio.fakefilesystem.FakeFileSystem`
   (in-memory, no real disk I/O)
 - a hand-written fake `NetworkTransport` that returns canned `NetworkResponse`s over an in-memory
   `io.ktor.utils.io.ByteChannel` (no real network I/O)
@@ -102,7 +102,7 @@ which constructs a real `DownloadTask` (from `downloader-core`) using:
 This gives full confidence in the engine's orchestration logic without any of the flakiness or
 speed cost of real network/disk access, while still testing the *real* implementations of the
 storage and filesystem layers (only the network boundary is faked, since HTTP is already unit
-tested independently in `downloader-network`).
+tested independently in `fetchflow-network`).
 
 ### Important: `kotlin("test-junit")`, not `useJUnitPlatform()`
 
@@ -116,7 +116,7 @@ otherwise Gradle's test worker fails immediately with:
 PreconditionViolationException: Cannot create Launcher without at least one TestEngine
 ```
 
-This exact mismatch existed transiently in `downloader-runtime/build.gradle.kts` and was removed;
+This exact mismatch existed transiently in `fetchflow-runtime/build.gradle.kts` and was removed;
 see [`docs/engine/download-task.md`](../engine/download-task.md) for the full debugging story
 (this was one of two stacked issues that made `DownloadTaskTest` fail).
 
@@ -145,7 +145,7 @@ the test calls `retry()`/`resume()`.
 
 ```mermaid
 graph TD
-    subgraph downloader-runtime [downloader-runtime (test-only wiring)]
+    subgraph fetchflow-runtime [fetchflow-runtime (test-only wiring)]
         DTT[DownloadTaskTest]
     end
     DTT --> DownloadTask
@@ -153,14 +153,14 @@ graph TD
     DTT --> OkioDownloadFileSystem
     DTT --> FakeNetworkTransport[fake NetworkTransport]
 
-    subgraph downloader-core
+    subgraph fetchflow-core
         DownloadTask
         DownloadStateMachine
     end
-    subgraph downloader-storage
+    subgraph fetchflow-storage
         SqlDelightDownloadRepository
     end
-    subgraph downloader-filesystem
+    subgraph fetchflow-filesystem
         OkioDownloadFileSystem
     end
 
@@ -170,7 +170,7 @@ graph TD
 ## Running the tests
 
 ```bash
-./gradlew :downloader-runtime:desktopTest --tests "*DownloadTaskTest*"
+./gradlew :fetchflow-runtime:desktopTest --tests "*DownloadTaskTest*"
 # or, all platform-independent tests:
-./gradlew :downloader-runtime:allTests
+./gradlew :fetchflow-runtime:allTests
 ```

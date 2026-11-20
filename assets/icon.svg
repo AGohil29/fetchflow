@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>FetchFlow</title>
+  <defs>
+    <linearGradient id="ff-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="0.55" stop-color="#4F7BFF"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <linearGradient id="ff-shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="url(#ff-bg)"/>
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="url(#ff-shine)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- side streams flowing into the arrow -->
+    <path d="M150 110 C150 196 240 176 252 252" stroke-width="30" stroke-opacity="0.62"/>
+    <path d="M362 110 C362 196 272 176 260 252" stroke-width="30" stroke-opacity="0.62"/>
+    <!-- arrow -->
+    <path d="M256 104 L256 336" stroke-width="34"/>
+    <path d="M190 276 L256 342 L322 276" stroke-width="34"/>
+    <!-- tray -->
+    <path d="M132 360 L132 382 Q132 414 164 414 L348 414 Q380 414 380 382 L380 360" stroke-width="30"/>
+  </g>
+</svg>

@@ -1,23 +1,23 @@
 # Architecture Overview
 
-This document ties together all the modules in `kmp-file-downloader` — what each one owns, how
+This document ties together all the modules in `fetchflow` — what each one owns, how
 they depend on each other, and the end-to-end flow of a single download. It's the starting point
 for understanding the codebase; module-specific docs go deeper on individual pieces:
 
-- [`downloader-network` module](../networking/downloader-network-module.md)
+- [`fetchflow-network` module](../networking/fetchflow-network-module.md)
 - [`DownloadStateMachine` tests](../testing/download-state-machine.md)
 - [`DownloadTask` engine](../engine/download-task.md)
-- [`downloader-runtime` module](../runtime/downloader-runtime-module.md)
+- [`fetchflow-runtime` module](../runtime/fetchflow-runtime-module.md)
 
 ## Module map
 
 ```
-kmp-file-downloader
-├── downloader-core         (domain models, state machine, DownloadTask engine, interfaces)
-├── downloader-network      (Ktor-based NetworkTransport implementation)
-├── downloader-filesystem   (Okio-based DownloadFileSystem implementation)
-├── downloader-storage      (SQLDelight-based DownloadRepository implementation)
-├── downloader-runtime      (multiplatform integration tests wiring core+network+filesystem+storage)
+fetchflow
+├── fetchflow-core         (domain models, state machine, DownloadTask engine, interfaces)
+├── fetchflow-network      (Ktor-based NetworkTransport implementation)
+├── fetchflow-filesystem   (Okio-based DownloadFileSystem implementation)
+├── fetchflow-storage      (SQLDelight-based DownloadRepository implementation)
+├── fetchflow-runtime      (multiplatform integration tests wiring core+network+filesystem+storage)
 └── samples
     ├── sample-desktop      (Compose Desktop app for manual end-to-end testing)
     └── sample-android      (Compose Android app; see docs/samples/android-sample.md)
@@ -27,25 +27,25 @@ kmp-file-downloader
 
 ```mermaid
 graph TD
-    runtime[downloader-runtime] --> core[downloader-core]
-    runtime --> network[downloader-network]
-    runtime --> filesystem[downloader-filesystem]
-    runtime --> storage[downloader-storage]
+    runtime[fetchflow-runtime] --> core[fetchflow-core]
+    runtime --> network[fetchflow-network]
+    runtime --> filesystem[fetchflow-filesystem]
+    runtime --> storage[fetchflow-storage]
 
     network --> core
     filesystem --> core
     storage --> core
 ```
 
-`downloader-core` is the innermost layer — it has **no** dependency on network, filesystem, or
+`fetchflow-core` is the innermost layer — it has **no** dependency on network, filesystem, or
 storage. It only defines:
 
 - **Domain models**: `DownloadRequest`, `DownloadRecord`, `DownloadState`, `DownloadError`,
   `DownloadId`, `DownloadPriority`, `ConflictStrategy`, `ChecksumValidation`,
   `NetworkRequest`/`NetworkResponse`.
 - **Interfaces (ports)**: `DownloadRepository`, `DownloadFileSystem`, `NetworkTransport` — each
-  implemented by a dedicated module (`downloader-storage`, `downloader-filesystem`,
-  `downloader-network` respectively). This is a ports-and-adapters (hexagonal) design: the engine
+  implemented by a dedicated module (`fetchflow-storage`, `fetchflow-filesystem`,
+  `fetchflow-network` respectively). This is a ports-and-adapters (hexagonal) design: the engine
   only ever talks to interfaces, never to Ktor/Okio/SQLDelight directly.
 - **The state machine**: `DownloadStateMachine` / `DownloadStateEvent` — a pure, dependency-free
   state container.
@@ -53,15 +53,15 @@ storage. It only defines:
   machine and calling the three interfaces above. See
   [`docs/engine/download-task.md`](../engine/download-task.md) for a deep dive.
 
-`downloader-network`, `downloader-filesystem`, and `downloader-storage` are adapters: each
-depends on `downloader-core` (to implement its interfaces / use its models) but not on each
-other, and `downloader-core` never depends on them — keeping the dependency graph acyclic and
+`fetchflow-network`, `fetchflow-filesystem`, and `fetchflow-storage` are adapters: each
+depends on `fetchflow-core` (to implement its interfaces / use its models) but not on each
+other, and `fetchflow-core` never depends on them — keeping the dependency graph acyclic and
 each adapter independently testable/swappable.
 
-`downloader-runtime` sits on top of all four and previously existed as three near-empty,
-platform-specific shells (`downloader-runtime-android`, `downloader-runtime-desktop`,
-`downloader-runtime-ios`). They have been consolidated into a single `downloader-runtime` module.
-See [`docs/runtime/downloader-runtime-module.md`](../runtime/downloader-runtime-module.md) for
+`fetchflow-runtime` sits on top of all four and previously existed as three near-empty,
+platform-specific shells (`fetchflow-runtime-android`, `fetchflow-runtime-desktop`,
+`fetchflow-runtime-ios`). They have been consolidated into a single `fetchflow-runtime` module.
+See [`docs/runtime/fetchflow-runtime-module.md`](../runtime/fetchflow-runtime-module.md) for
 details on that consolidation.
 
 ## End-to-end flow of a single download
@@ -164,12 +164,12 @@ Connecting`)** — states cannot be skipped.
 
 | Module               | What's tested                                                                                                                                                                                                                   | Where                                |
 |----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| `downloader-core`    | `DownloadStateMachine` transition rules (pure, no I/O)                                                                                                                                                                          | `downloader-core/src/commonTest`     |
-| `downloader-network` | HTTP request/response mapping via `MockEngine` (no real network)                                                                                                                                                                | `downloader-network/src/commonTest`  |
-| `downloader-storage` | SQLDelight queries against an in-memory SQLite DB (incl. headers/checksum round trip); upgrade of a legacy on-disk DB (`DatabaseDriverFactoryMigrationTest`); migrations `1.sqm`/`2.sqm` checked by `verifySqlDelightMigration` | `downloader-storage/src/desktopTest` |
-| `downloader-runtime` | Full `DownloadTask` integration: real state machine + real repository (in-memory SQLite) + fake filesystem (`okio.fakefilesystem.FakeFileSystem`) + fake `NetworkTransport`                                                     | `downloader-runtime/src/desktopTest` |
+| `fetchflow-core`    | `DownloadStateMachine` transition rules (pure, no I/O)                                                                                                                                                                          | `fetchflow-core/src/commonTest`     |
+| `fetchflow-network` | HTTP request/response mapping via `MockEngine` (no real network)                                                                                                                                                                | `fetchflow-network/src/commonTest`  |
+| `fetchflow-storage` | SQLDelight queries against an in-memory SQLite DB (incl. headers/checksum round trip); upgrade of a legacy on-disk DB (`DatabaseDriverFactoryMigrationTest`); migrations `1.sqm`/`2.sqm` checked by `verifySqlDelightMigration` | `fetchflow-storage/src/desktopTest` |
+| `fetchflow-runtime` | Full `DownloadTask` integration: real state machine + real repository (in-memory SQLite) + fake filesystem (`okio.fakefilesystem.FakeFileSystem`) + fake `NetworkTransport`                                                     | `fetchflow-runtime/src/desktopTest` |
 
-`downloader-runtime`'s tests are the only ones that exercise the complete, wired-together engine
+`fetchflow-runtime`'s tests are the only ones that exercise the complete, wired-together engine
 end-to-end (minus real network/disk I/O, which are faked), which is why `DownloadTaskTest` lives
-there instead of in `downloader-core` — it depends on concrete implementations from all three
+there instead of in `fetchflow-core` — it depends on concrete implementations from all three
 adapter modules.

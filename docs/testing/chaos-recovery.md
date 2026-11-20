@@ -1,6 +1,6 @@
 # Chaos Recovery Tests
 
-**File:** `downloader-runtime/src/desktopTest/kotlin/com/arun/downloader/runtime/chaos/ChaosRecoveryTest.kt`
+**File:** `fetchflow-runtime/src/desktopTest/kotlin/io/github/agohil29/fetchflow/runtime/chaos/ChaosRecoveryTest.kt`
 
 ## Purpose
 
@@ -47,12 +47,12 @@ they can be resumed instead of appearing stuck as `DOWNLOADING`.
 ## Running
 
 ```bash
-./gradlew :downloader-runtime:desktopTest --tests "com.arun.downloader.runtime.chaos.ChaosRecoveryTest"
+./gradlew :fetchflow-runtime:desktopTest --tests "io.github.agohil29.fetchflow.runtime.chaos.ChaosRecoveryTest"
 ```
 
 ## Related docs
 
 - [Cross-platform parity test](cross-platform-parity.md)
 - [Download state machine tests](download-state-machine.md)
-- [Runtime module](../runtime/downloader-runtime-module.md)
+- [Runtime module](../runtime/fetchflow-runtime-module.md)
 

@@ -17,7 +17,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        title = "KMP Downloader — Desktop Sample (Compose Multiplatform)",
+        title = "FetchFlow — Desktop Sample (Compose Multiplatform)",
         state = windowState
     ) {
         DownloadScreen(

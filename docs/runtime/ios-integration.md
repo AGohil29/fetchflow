@@ -1,6 +1,6 @@
 # iOS Background Download Integration
 
-This document outlines the setup required to run background transfers on iOS using `downloader-runtime`.
+This document outlines the setup required to run background transfers on iOS using `fetchflow-runtime`.
 
 ---
 

@@ -1,11 +1,11 @@
 # `DownloadTask` Engine
 
-`DownloadTask` (`downloader-core/src/commonMain/kotlin/com/arun/downloader/core/engine/DownloadTask.kt`)
+`DownloadTask` (`fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/engine/DownloadTask.kt`)
 is the orchestrator that drives a **single download** from `Idle` through to `Completed`/
 `Failed`/`Cancelled`, coordinating the state machine and the three port interfaces
 (`DownloadRepository`, `NetworkTransport`, `DownloadFileSystem`). This document explains its
 current design, and the two bugs found and fixed while getting `DownloadTaskTest` (in
-`downloader-runtime`) to pass.
+`fetchflow-runtime`) to pass.
 
 ## Construction
 
@@ -66,7 +66,7 @@ suspend fun execute() = withContext(ioDispatcher) {
 }
 ```
 
-1. Writes stream to a **staging** file (`stagingDirectory/.downloader_staging/<id>.part`), never
+1. Writes stream to a **staging** file (`stagingDirectory/.fetchflow_staging/<id>.part`), never
    directly to the destination — so a half-written file is never visible at the final path.
 2. Validates the downloaded byte count against `Content-Length` (if known), and optionally the
    checksum (`MD5`/`SHA1`/`SHA256`). Fresh downloads are hashed in-stream via an
@@ -84,7 +84,7 @@ suspend fun execute() = withContext(ioDispatcher) {
 ### Streaming and response ownership
 
 - `network.execute` now returns as soon as headers arrive; the body is streamed, not buffered
-  (see [`downloader-network-module.md`](../networking/downloader-network-module.md)).
+  (see [`fetchflow-network-module.md`](../networking/fetchflow-network-module.md)).
 - `DownloadTask` stores the `NetworkResponse` and calls `NetworkResponse.close()` in `finally`,
   including on cancellation and when opening the disk sink fails.
 - `pumpBytes` loops until EOF (`readAvailable` returns -1) with `ensureActive()` on each
@@ -221,7 +221,7 @@ target:
 This keeps `DownloadTask` fully in `commonMain` while still getting a wall-clock epoch value
 per platform, without pulling in `kotlinx-datetime` for a single timestamp read.
 
-The same function is exposed to other modules as `com.arun.downloader.core.time.EpochClock`
+The same function is exposed to other modules as `io.github.agohil29.fetchflow.core.time.EpochClock`
 (`EpochClock.nowEpochMs()`). `DefaultFileDownloader` uses it for all persisted timestamps; it
 previously used a monotonic `TimeSource`, which produced values of about `0`.
 

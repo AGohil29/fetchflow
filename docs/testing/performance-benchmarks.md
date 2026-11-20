@@ -1,6 +1,6 @@
 # Performance Benchmark Tests
 
-**File:** `downloader-runtime/src/desktopTest/kotlin/com/arun/downloader/runtime/benchmark/DownloaderPerformanceBenchmarkTest.kt`
+**File:** `fetchflow-runtime/src/desktopTest/kotlin/io/github/agohil29/fetchflow/runtime/benchmark/DownloaderPerformanceBenchmarkTest.kt`
 
 ## Purpose
 
@@ -45,7 +45,7 @@ unit label is `s` where the value is in microseconds (a `µs` typo in the test's
 ## Running
 
 ```bash
-./gradlew :downloader-runtime:desktopTest --tests "com.arun.downloader.runtime.benchmark.DownloaderPerformanceBenchmarkTest" -i
+./gradlew :fetchflow-runtime:desktopTest --tests "io.github.agohil29.fetchflow.runtime.benchmark.DownloaderPerformanceBenchmarkTest" -i
 ```
 
 Use `-i` to see the `BENCHMARK` lines in the Gradle output.

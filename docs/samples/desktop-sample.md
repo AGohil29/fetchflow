@@ -4,7 +4,7 @@ A Compose Multiplatform (Desktop/JVM) app that wires every library module togeth
 to enqueue, pause, resume, retry and delete downloads. It is the quickest way to manually verify
 the engine end to end with real network and disk I/O.
 
-Source: `samples/sample-desktop/src/desktopMain/kotlin/com/arun/downloader/sample/desktop/Main.kt`
+Source: `samples/sample-desktop/src/desktopMain/kotlin/io/github/agohil29/fetchflow/sample/desktop/Main.kt`
 
 ## Module setup
 
@@ -19,11 +19,11 @@ include(":samples:sample-desktop")
 - Plugins: `kotlin-multiplatform`, `compose-multiplatform`, `compose-compiler` (from the version
   catalog, `gradle/libs.versions.toml`).
 - Single `jvm("desktop")` target.
-- `desktopMain` depends on `downloader-core`, `-filesystem`, `-storage`, `-network`, `-runtime`,
+- `desktopMain` depends on `fetchflow-core`, `-filesystem`, `-storage`, `-network`, `-runtime`,
   plus `okio`, `compose.desktop.currentOs`, `kotlinx-coroutines-swing`,
   `sqldelight-driver-sqlite` and `ktor-client-cio`.
-- `compose.desktop.application.mainClass = "com.arun.downloader.sample.desktop.MainKt"`.
-- Native distributions: Dmg, Msi, Deb (`packageName = "KmpFileDownloaderSample"`).
+- `compose.desktop.application.mainClass = "io.github.agohil29.fetchflow.sample.desktop.MainKt"`.
+- Native distributions: Dmg, Msi, Deb (`packageName = "io.github.agohil29.fetchflow.sample.desktop"`).
 
 `:samples` itself is only a container directory with no build file.
 
@@ -38,7 +38,7 @@ include(":samples:sample-desktop")
 | Step        | Implementation                                                                                                                                                                                                                                                                        |
 |-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Directories | `DesktopPathResolver.getDefaultDownloadDirectory()` / `getDefaultDatabaseDirectory()`                                                                                                                                                                                                 |
-| Storage     | `createDownloadDatabase(DatabaseDriverFactory(<dbDir>/downloader_sample.db))` — creates the schema for a new file and upgrades an existing one (e.g. adds `final_path`, `request_headers`, `checksum_algorithm`, `checksum_hash`); `SqlDelightDownloadRepository` on `Dispatchers.IO` |
+| Storage     | `createDownloadDatabase(DatabaseDriverFactory(<dbDir>/fetchflow_sample.db))` — creates the schema for a new file and upgrades an existing one (e.g. adds `final_path`, `request_headers`, `checksum_algorithm`, `checksum_hash`); `SqlDelightDownloadRepository` on `Dispatchers.IO` |
 | Network     | Ktor `HttpClient(CIO)` with `HttpTimeout`, wrapped in `KtorNetworkTransport`                                                                                                                                                                                                          |
 | Filesystem  | `OkioDownloadFileSystem`                                                                                                                                                                                                                                                              |
 | Config      | `DownloaderConfig(maxConcurrentDownloads = 3, stagingDirectory = downloadDir)`                                                                                                                                                                                                        |
@@ -57,7 +57,7 @@ Large files need special timeout handling:
 ## UI
 
 The UI is the shared `DownloadScreen` composable from `samples:sample-common`
-(`samples/sample-common/src/commonMain/kotlin/com/arun/downloader/sample/common/DownloadScreen.kt`),
+(`samples/sample-common/src/commonMain/kotlin/io/github/agohil29/fetchflow/sample/common/DownloadScreen.kt`),
 also used by the Android and iOS samples.
 
 ### `DownloadScreen`

@@ -134,7 +134,7 @@ fun DownloadScreen(
                         title = {
                             Column {
                                 Text(
-                                    "KMP Downloader",
+                                    "FetchFlow",
                                     style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Text(

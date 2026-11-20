@@ -36,7 +36,7 @@ actual class PlatformDownloaderFactory(
         val driver = AndroidSqliteDriver(
             schema = DownloadDatabase.Schema,
             context = context,
-            name = "downloader_sample.db"
+            name = "fetchflow_sample.db"
         )
 
         val database = DownloadDatabase(

@@ -47,7 +47,7 @@ actual class PlatformDownloaderFactory {
     actual fun createDownloader(paths: PlatformPaths): FileDownloader {
         val driver = NativeSqliteDriver(
             schema = DownloadDatabase.Schema,
-            name = "downloader_sample.db",
+            name = "fetchflow_sample.db",
             maxReaderConnections = 1
         )
 

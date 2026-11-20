@@ -30,7 +30,7 @@ actual class PlatformDownloaderFactory {
 
     actual fun createDownloader(paths: PlatformPaths): FileDownloader {
         val dbDir = DesktopPathResolver.getDefaultDatabaseDirectory().toFile().apply { mkdirs() }
-        val dbFile = File(dbDir, "downloader_sample.db")
+        val dbFile = File(dbDir, "fetchflow_sample.db")
 
         // Use the library factory: it creates the schema for new files and upgrades existing
         // databases (e.g. adds final_path) instead of silently ignoring "already created" errors.

@@ -5,13 +5,13 @@ scheduler** and the **public `FileDownloader` facade** that ties the state machi
 network, and file system layers together into a usable download manager with pause/resume/cancel/
 retry/delete support. It explains every file added:
 
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/FileDownloader.kt` (new)
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/model/DownloaderConfig.kt` (new)
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/model/QueuedDownloadItem.kt` (new)
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/scheduler/SchedulerQueue.kt` (new)
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/scheduler/DownloadScheduler.kt` (new)
-- `downloader-core/src/commonTest/kotlin/com/arun/downloader/core/scheduler/DownloadSchedulerTest.kt` (new)
-- `downloader-runtime/src/commonMain/kotlin/com/arun/downloader/runtime/DefaultFileDownloader.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/FileDownloader.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/model/DownloaderConfig.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/model/QueuedDownloadItem.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/scheduler/SchedulerQueue.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/scheduler/DownloadScheduler.kt` (new)
+- `fetchflow-core/src/commonTest/kotlin/io/github/agohil29/fetchflow/core/scheduler/DownloadSchedulerTest.kt` (new)
+- `fetchflow-runtime/src/commonMain/kotlin/io/github/agohil29/fetchflow/runtime/DefaultFileDownloader.kt` (new)
 
 This layer sits **above** `DownloadTask` (see
 [`docs/engine/download-task.md`](../engine/download-task.md) and
@@ -24,9 +24,9 @@ tasks, or repositories at all.
 ## Module overview
 
 ```
-downloader-core/
+fetchflow-core/
 └── src/
-    ├── commonMain/kotlin/com/arun/downloader/core/
+    ├── commonMain/kotlin/io/github/agohil29/fetchflow/core/
     │   ├── FileDownloader.kt                 (public facade interface)
     │   ├── model/
     │   │   ├── DownloaderConfig.kt           (construction-time configuration)
@@ -34,20 +34,20 @@ downloader-core/
     │   └── scheduler/
     │       ├── SchedulerQueue.kt             (priority queue, no coroutines)
     │       └── DownloadScheduler.kt          (concurrency-limited dispatcher)
-    └── commonTest/kotlin/com/arun/downloader/core/scheduler/
+    └── commonTest/kotlin/io/github/agohil29/fetchflow/core/scheduler/
         └── DownloadSchedulerTest.kt          (queue ordering + concurrency limit tests)
 
-downloader-runtime/
-└── src/commonMain/kotlin/com/arun/downloader/runtime/
+fetchflow-runtime/
+└── src/commonMain/kotlin/io/github/agohil29/fetchflow/runtime/
     └── DefaultFileDownloader.kt              (concrete FileDownloader implementation)
 ```
 
 `FileDownloader`, `DownloaderConfig`, `QueuedDownloadItem`, `SchedulerQueue`, and
-`DownloadScheduler` all live in `downloader-core` (pure Kotlin, no platform/DB/network
-dependencies), while `DefaultFileDownloader` lives in `downloader-runtime` because it wires
+`DownloadScheduler` all live in `fetchflow-core` (pure Kotlin, no platform/DB/network
+dependencies), while `DefaultFileDownloader` lives in `fetchflow-runtime` because it wires
 together `DownloadTask`, the SqlDelight-backed `DownloadRepository`, `NetworkTransport`, and
 `DownloadFileSystem` — the concrete platform implementations assembled elsewhere in
-`downloader-runtime`.
+`fetchflow-runtime`.
 
 ## `FileDownloader.kt` — the public API surface
 
@@ -101,10 +101,10 @@ data class DownloaderConfig(
 A single, immutable configuration object passed into `DefaultFileDownloader` at construction
 time. It centralizes the knobs that were previously scattered as constructor defaults on
 `DownloadTask` and `NetworkClientFactory` (see
-[`docs/networking/downloader-network-module.md`](../networking/downloader-network-module.md)):
+[`docs/networking/fetchflow-network-module.md`](../networking/fetchflow-network-module.md)):
 
 - `maxConcurrentDownloads` seeds the `DownloadScheduler`'s concurrency limit (must be > 0).
-- `stagingDirectory` is the root directory `DownloadTask` uses for its `.downloader_staging`
+- `stagingDirectory` is the root directory `DownloadTask` uses for its `.fetchflow_staging`
   subfolder (also reused by `DefaultFileDownloader.delete` to locate a download's `.part` file).
 - `connectTimeoutMs`/`readTimeoutMs` mirror `NetworkClientFactory.createDefault`'s parameters,
   intended to be threaded through when the network client is constructed by the (not-yet-written)
@@ -257,7 +257,7 @@ cleanup ordering on cancel, and starting queued work when the limit is increased
 
 ## `DefaultFileDownloader.kt` — wiring it all together
 
-The concrete `FileDownloader` implementation in `downloader-runtime`, constructed with a
+The concrete `FileDownloader` implementation in `fetchflow-runtime`, constructed with a
 `DownloaderConfig` plus the three port interfaces (`DownloadRepository`, `NetworkTransport`,
 `DownloadFileSystem`):
 
@@ -430,7 +430,7 @@ separate retry-specific logic (e.g. exponential backoff, retry-count limits) exi
 > resume after a process restart. If they contain long-lived secrets, protect the database file
 > (e.g. SQLCipher / platform encryption) or use short-lived tokens.
 
-Regression tests: `ResumeRetryRequestLossReproTest` (`downloader-runtime/src/desktopTest`) checks
+Regression tests: `ResumeRetryRequestLossReproTest` (`fetchflow-runtime/src/desktopTest`) checks
 that retry/resume resend the original headers and that a corrupt payload ends as `FAILED`, and
 `SqlDelightDownloadRepositoryTest.headersAndChecksumRoundTrip` checks the storage round trip.
 
@@ -468,7 +468,7 @@ album or one update package) can be controlled together.
 - `DownloadRecord.group: String? = null` — the persisted value, read back from storage.
 - `DownloadRepository.getByGroup(groupName): List<DownloadRecord>` — new repository query.
 
-**Storage changes (`downloader-storage`)**
+**Storage changes (`fetchflow-storage`)**
 
 - New nullable column `download_group TEXT` on `DownloadRecordEntity`, plus the index
   `idx_download_record_group` for fast lookup. `insertOrReplaceRecord` writes it from
@@ -518,7 +518,7 @@ override suspend fun shutdown() {
 Tears down everything in order: stops/cancels all scheduler work, clears the local task-tracking
 map, closes the shared `NetworkTransport` (releasing the underlying HTTP client/connection pool —
 see `KtorNetworkTransport.close()` in
-[`docs/networking/downloader-network-module.md`](../networking/downloader-network-module.md)),
+[`docs/networking/fetchflow-network-module.md`](../networking/fetchflow-network-module.md)),
 and finally cancels the downloader's own `CoroutineScope` so any remaining background collectors
 (e.g. from `observe()`'s fallback flows) stop. `scheduler.shutdown()` now waits for active jobs to
 finish cleanup before the rest of the teardown runs.
@@ -544,7 +544,7 @@ finish cleanup before the rest of the teardown runs.
   - Only type and message are persisted, so structured fields (`httpCode`, `expected`/`actual`
     checksum, paths, disk-space numbers) are parsed best-effort from the default message formats.
     `RateLimited.retryAfterMs` and `RangeNotSatisfiable.totalBytes` are restored as `null`.
-  - Covered by `FailedStateRestoreReproTest` (`downloader-runtime` `desktopTest`).
+  - Covered by `FailedStateRestoreReproTest` (`fetchflow-runtime` `desktopTest`).
 
 ### Background transfer engine (`backgroundEngine`)
 
@@ -573,7 +573,7 @@ mark taken on the same line (≈ 0) instead of a wall-clock time. Every timestam
 `DefaultFileDownloader` (`createdAtEpochMs`, `updatedAtEpochMs`, `Queued` enqueue time, scheduler
 ordering) was therefore about `0`.
 
-It now delegates to the shared `com.arun.downloader.core.time.EpochClock`:
+It now delegates to the shared `io.github.agohil29.fetchflow.core.time.EpochClock`:
 
 ```kotlin
 object EpochClock {
@@ -583,8 +583,8 @@ object EpochClock {
 private fun currentTimeEpochMs(): Long = EpochClock.nowEpochMs()
 ```
 
-`EpochClock` (in `downloader-core`) wraps the same platform `getSystemClockEpochMs()`
+`EpochClock` (in `fetchflow-core`) wraps the same platform `getSystemClockEpochMs()`
 expect/actual that `DownloadTask` uses (see
 [`docs/engine/download-task.md`](../engine/download-task.md#platform-clock-expectactual)), so the
 engine and runtime share one wall-clock source. Do not use a monotonic `TimeSource` for persisted
-timestamps. Covered by `downloader-runtime/src/desktopTest/.../TimestampEpochReproTest.kt`.
+timestamps. Covered by `fetchflow-runtime/src/desktopTest/.../TimestampEpochReproTest.kt`.
