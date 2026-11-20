@@ -32,11 +32,11 @@ android {
 
 dependencies {
     implementation(project(":samples:sample-common"))
-    implementation(project(":downloader-core"))
-    implementation(project(":downloader-filesystem"))
-    implementation(project(":downloader-storage"))
-    implementation(project(":downloader-network"))
-    implementation(project(":downloader-runtime"))
+    implementation(project(":fetchflow-core"))
+    implementation(project(":fetchflow-filesystem"))
+    implementation(project(":fetchflow-storage"))
+    implementation(project(":fetchflow-network"))
+    implementation(project(":fetchflow-runtime"))
 
     implementation(libs.sqldelight.driver.android)
 

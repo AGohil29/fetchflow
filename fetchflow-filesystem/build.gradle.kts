@@ -10,7 +10,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":downloader-core"))
+            api(project(":fetchflow-core"))
             api(libs.findLibrary("okio").get())
         }
 

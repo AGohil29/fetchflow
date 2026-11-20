@@ -38,7 +38,7 @@ class IosBackgroundWiringReproTest {
     @Test
     fun `iOS downloader is wired to the NSURLSession background bridge`() {
         // Everything that builds a downloader for iOS (library + samples), excluding the bridge itself
-        val iosSources = listOf("downloader-runtime", "samples/sample-common", "samples/sample-ios")
+        val iosSources = listOf("fetchflow-runtime", "samples/sample-common", "samples/sample-ios")
             .flatMap { kotlinSources(repoRoot / it / "src") }
             .filter {
                 val normalized = it.toString().replace('\\', '/')

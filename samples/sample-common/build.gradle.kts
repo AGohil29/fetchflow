@@ -35,18 +35,18 @@ kotlin {
             baseName = "SampleCommonUI"
             isStatic = true
             // Export core API models to Swift if needed
-            export(project(":downloader-core"))
-            export(project(":downloader-runtime"))
+            export(project(":fetchflow-core"))
+            export(project(":fetchflow-runtime"))
         }
     }
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":downloader-core"))
-            api(project(":downloader-runtime"))
-            implementation(project(":downloader-filesystem"))
-            implementation(project(":downloader-storage"))
-            implementation(project(":downloader-network"))
+            api(project(":fetchflow-core"))
+            api(project(":fetchflow-runtime"))
+            implementation(project(":fetchflow-filesystem"))
+            implementation(project(":fetchflow-storage"))
+            implementation(project(":fetchflow-network"))
 
             // Okio & Coroutines
             api(libs.findLibrary("okio").get())

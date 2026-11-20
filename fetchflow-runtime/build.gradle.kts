@@ -29,10 +29,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":downloader-core"))
-            api(project(":downloader-storage"))
-            api(project(":downloader-network"))
-            api(project(":downloader-filesystem"))
+            api(project(":fetchflow-core"))
+            api(project(":fetchflow-storage"))
+            api(project(":fetchflow-network"))
+            api(project(":fetchflow-filesystem"))
             api(libs.findLibrary("ktor-client-core").get())
         }
 

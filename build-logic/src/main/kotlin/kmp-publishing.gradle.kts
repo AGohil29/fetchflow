@@ -13,13 +13,10 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-// Published artifact base name: downloader-runtime -> fetchflow,
-// downloader-core -> fetchflow-core, etc. The plugin appends target suffixes itself
-// (-desktop, -android, -iosarm64, ...).
-val publishedBaseName = when (val n = project.name) {
-    "downloader-runtime" -> "fetchflow"
-    else -> "fetchflow-" + n.removePrefix("downloader-")
-}
+// Published artifact base name: fetchflow-runtime -> fetchflow; other modules keep their
+// project name (fetchflow-core, fetchflow-network, ...). The plugin appends target suffixes
+// itself (-desktop, -android, -iosarm64, ...).
+val publishedBaseName = if (project.name == "fetchflow-runtime") "fetchflow" else project.name
 
 // Ship the LICENSE inside META-INF of every published jar.
 tasks.withType<Jar>().configureEach {

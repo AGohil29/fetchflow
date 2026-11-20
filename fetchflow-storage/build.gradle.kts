@@ -19,7 +19,7 @@ sqldelight {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":downloader-core"))
+            implementation(project(":fetchflow-core"))
             implementation(libs.findLibrary("sqldelight-runtime").get())
             implementation(libs.findLibrary("sqldelight-coroutines").get())
         }

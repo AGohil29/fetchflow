@@ -10,8 +10,8 @@ plugins {
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 extensions.configure<LibraryExtension> {
-    // Unique per module: downloader-core -> com.arun.downloader.core, etc.
-    namespace = "com.arun.downloader.${project.name.removePrefix("downloader-").replace('-', '.')}"
+    // Unique per module: fetchflow-core -> com.arun.downloader.core, etc.
+    namespace = "com.arun.downloader.${project.name.removePrefix("fetchflow-").replace('-', '.')}"
     compileSdk = 36
     defaultConfig {
         minSdk = 24

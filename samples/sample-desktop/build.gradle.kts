@@ -19,8 +19,8 @@ kotlin {
         val desktopMain by getting {
             dependencies {
                 implementation(project(":samples:sample-common"))
-                implementation(project(":downloader-core"))
-                implementation(project(":downloader-runtime"))
+                implementation(project(":fetchflow-core"))
+                implementation(project(":fetchflow-runtime"))
                 implementation(libs.findLibrary("okio").get())
                 implementation(compose.desktop.currentOs)
                 implementation(libs.findLibrary("kotlinx-coroutines-swing").get())
