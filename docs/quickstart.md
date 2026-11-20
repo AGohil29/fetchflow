@@ -1,6 +1,6 @@
 # 5-Minute Quickstart Guide
 
-`kmp-file-downloader` is a cross-platform file downloading engine for Kotlin Multiplatform
+FetchFlow is a cross-platform file downloading engine for Kotlin Multiplatform
 (Android, iOS, Desktop). It supports pause/resume (HTTP range), priorities, concurrency limits,
 conflict strategies, checksum validation, persistence across restarts and download groups.
 
@@ -8,26 +8,25 @@ conflict strategies, checksum validation, persistence across restarts and downlo
 
 ## 1. Installation
 
-The library is currently consumed as Gradle modules of this repository (there is no published
-Maven artifact yet). Include the repository in your build, or copy the modules, and depend on the
-runtime module from `commonMain`:
+Add the `fetchflow` artifact to your shared module. It brings in the core, storage, network and
+filesystem modules, so one dependency is enough:
 
 ```kotlin
 // build.gradle.kts
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":downloader-runtime"))
-            // Types you use directly (DownloadRequest, DownloadState, FileDownloader, ...)
-            implementation(project(":downloader-core"))
+            implementation("io.github.agohil29:fetchflow:0.1.0")
         }
     }
 }
 ```
 
-If you wire the pieces yourself (step 2) you also need `:downloader-storage`,
-`:downloader-network` and `:downloader-filesystem`. Once artifacts are published, replace the
-`project(...)` lines with the published coordinates and `<version>`.
+You also need a Ktor HTTP engine per platform (use the same Ktor version as the library):
+`ktor-client-okhttp` for Android, `ktor-client-darwin` for iOS and `ktor-client-cio` for Desktop.
+
+To work on the library itself, depend on the modules of this repository instead, for example
+`implementation(project(":fetchflow-runtime"))`.
 
 Module roles: see [architecture overview](architecture/overview.md).
 
@@ -69,7 +68,7 @@ Complete apps are in [samples/desktop-sample.md](samples/desktop-sample.md) and
 ### Android
 
 ```kotlin
-val database = createDownloadDatabase(DatabaseDriverFactory(context))   // "downloader_metadata.db"
+val database = createDownloadDatabase(DatabaseDriverFactory(context))   // "fetchflow.db"
 
 val downloader: FileDownloader = DefaultFileDownloader(
     config = DownloaderConfig(
@@ -87,7 +86,7 @@ notifications see [Android notifications and WorkManager](android/android-notifi
 ### iOS
 
 ```kotlin
-val database = createDownloadDatabase(DatabaseDriverFactory())          // "downloader_metadata.db"
+val database = createDownloadDatabase(DatabaseDriverFactory())          // "fetchflow.db"
 
 val downloader: FileDownloader = DefaultFileDownloader(
     config = DownloaderConfig(stagingDirectory = documentsDirectoryPath.toPath()),

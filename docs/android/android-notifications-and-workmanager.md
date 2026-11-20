@@ -2,12 +2,12 @@
 
 ## Build configuration
 
-### `downloader-runtime/build.gradle.kts`
+### `fetchflow-runtime/build.gradle.kts`
 - Adds `androidTarget { ... jvmTarget = "17" }` so the module compiles for Android with JVM 17.
 - New `androidMain` dependencies: `androidx-core-ktx` (notifications, `ServiceCompat`),
   `androidx-work-runtime-ktx` (WorkManager), `sqldelight-driver-android` (SQLite on Android) and
   `ktor-client-okhttp` (HTTP engine).
-- New `android { }` block: `namespace = "com.arun.downloader.runtime"`, `compileSdk = 36`,
+- New `android { }` block: `namespace = "io.github.agohil29.fetchflow.runtime"`, `compileSdk = 36`,
   `minSdk = 24`, Java 17 source/target compatibility.
 
 ### `gradle/libs.versions.toml`
@@ -21,14 +21,14 @@ The catalog alias `androidx-workmanager` was renamed to `androidx-work-runtime-k
   `POST_NOTIFICATIONS` (Android 13+; the host app must still request it at runtime).
 - **`DownloadForegroundService`** declared non-exported with `foregroundServiceType="dataSync"`.
 - **`DownloadActionReceiver`** declared non-exported, listening for
-  `com.arun.downloader.action.PAUSE` and `com.arun.downloader.action.CANCEL`.
+  `io.github.agohil29.fetchflow.action.PAUSE` and `io.github.agohil29.fetchflow.action.CANCEL`.
 - A commented-out `androidx.startup.InitializationProvider` block (for disabling WorkManager's
   default auto-initialization so the host app can supply a custom configuration/factory). It is
   currently inactive, so WorkManager initializes with its defaults.
 
 ## `DownloadNotificationManager.kt`
 Wraps Android's `NotificationManager`.
-- On construction creates the notification channel `download_channel_v1` ("File Downloads",
+- On construction creates the notification channel `fetchflow_downloads` ("File Downloads",
   `IMPORTANCE_LOW`, no badge) on API 26+.
 - `buildProgressNotification(title, downloadedBytes, totalBytes, progressPercent, downloadId)`:
   ongoing, only-alert-once notification. With known size it shows a determinate progress bar and

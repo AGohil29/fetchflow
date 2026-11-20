@@ -1,13 +1,13 @@
-# KMP File Downloader
-
-### A resumable file downloader library for Kotlin Multiplatform: Android, iOS and Desktop
-
 <p align="center">
-  <img src="assets/logo.png" alt="KMP File Downloader" width="512"/>
+  <img src="assets/logo.png" alt="FetchFlow: resumable file downloads for Kotlin Multiplatform" width="720"/>
 </p>
 
+# FetchFlow
+
+### Resumable file downloads for Kotlin Multiplatform: Android, iOS and Desktop
+
 <!-- Add after the first release:
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.agohil29/kmp-file-downloader)](https://central.sonatype.com/artifact/io.github.agohil29/kmp-file-downloader)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.agohil29/fetchflow)](https://central.sonatype.com/artifact/io.github.agohil29/fetchflow)
 -->
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Desktop-green)
@@ -29,14 +29,14 @@
   </tr>
 </table>
 
-# About KMP File Downloader
+# About FetchFlow
 
-KMP File Downloader lets you download large files from shared Kotlin code, with the same API on
+FetchFlow lets you download large files from shared Kotlin code, with the same API on
 every platform. It keeps a persistent queue, resumes interrupted transfers with HTTP `Range`
 requests, verifies what it downloaded, and only puts a finished, validated file in its final
 location.
 
-# Why use KMP File Downloader
+# Why use FetchFlow
 
 - Works on Android, iOS and Desktop (JVM) from one `commonMain` API.
 - Pause and resume using HTTP `Range` with `If-Range` validators, so a changed file is never spliced.
@@ -46,7 +46,7 @@ location.
 - Safe writes: bytes go to a staging `.part` file and are moved into place atomically.
 - Conflict strategies when the target file already exists (overwrite, rename, fail).
 - Reactive progress and speed through Kotlin `StateFlow` and `Flow`.
-- Android: foreground service, progress notification and WorkManager integration.
+- Android: foreground service, progress notification with Pause, Resume and Cancel actions, and WorkManager integration.
 - iOS: background `NSURLSession` with resume data, so transfers continue while the app is suspended.
 - Modular: use the whole runtime, or just the parts you need.
 
@@ -56,7 +56,7 @@ location.
 
 [//]: # (</p>)
 
-# How to use KMP File Downloader
+# How to use FetchFlow
 
 ## Installation
 
@@ -65,13 +65,13 @@ location.
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.agohil29:kmp-file-downloader:0.1.0")
+            implementation("io.github.agohil29:fetchflow:0.1.0")
         }
     }
 }
 ```
 
-The runtime artifact brings in the core, storage, network and filesystem modules, so you do not
+The `fetchflow` artifact brings in the core, storage, network and filesystem modules, so you do not
 need to add them separately. You do need a **Ktor HTTP engine** for each platform you target:
 
 ```kotlin
@@ -156,7 +156,7 @@ downloader.observe(id).collect { state ->
 }
 ```
 
-`observe` returns a `StateFlow<DownloadState>`. See the [state diagram](#download-states) below.
+`observe` returns a `StateFlow<DownloadState>`. The possible states are listed in [How it works](#how-it-works).
 
 ### 3. Control downloads
 
@@ -193,8 +193,8 @@ Details: [iOS integration](docs/runtime/ios-integration.md).
 
 #### Desktop
 
-`DesktopPathResolver` gives sensible default download and database folders, and `DesktopShutdownHook`
-lets you flush state when the JVM exits.
+`DesktopPathResolver` gives sensible default download and database folders (under a `FetchFlow`
+folder), and `DesktopShutdownHook` lets you flush state when the JVM exits.
 
 ## Customisation
 
@@ -236,21 +236,21 @@ States: `Idle`, `Queued`, `Connecting`, `Downloading`, `Paused`, `Validating`, `
 
 # Modules
 
-| Module                  | Role                                                              |
-|-------------------------|-------------------------------------------------------------------|
-| `downloader-core`       | Public API, models, state machine, scheduler, download engine     |
-| `downloader-network`    | Ktor-based `NetworkTransport`                                     |
-| `downloader-filesystem` | Okio-based file system, staging and atomic moves                  |
-| `downloader-storage`    | SQLDelight persistence                                            |
-| `downloader-runtime`    | `DefaultFileDownloader` plus Android, iOS and Desktop integration |
+| Module                 | Published artifact     | Role                                                              |
+|------------------------|------------------------|-------------------------------------------------------------------|
+| `fetchflow-core`       | `fetchflow-core`       | Public API, models, state machine, scheduler, download engine     |
+| `fetchflow-network`    | `fetchflow-network`    | Ktor-based `NetworkTransport`                                     |
+| `fetchflow-filesystem` | `fetchflow-filesystem` | Okio-based file system, staging and atomic moves                  |
+| `fetchflow-storage`    | `fetchflow-storage`    | SQLDelight persistence                                            |
+| `fetchflow-runtime`    | `fetchflow`            | `DefaultFileDownloader` plus Android, iOS and Desktop integration |
 
-Published artifacts: `kmp-file-downloader` (runtime), `kmp-file-downloader-core`,
-`-network`, `-filesystem` and `-storage`. More in the
+All artifacts use the group `io.github.agohil29` and share one version. Most apps only need
+`fetchflow`. More in the
 [architecture overview](docs/architecture/overview.md).
 
 # Known limitations
 
-- There is no one-call factory yet; you assemble DefaultFileDownloader yourself (see above).
+- There is no one-call factory yet; you assemble `DefaultFileDownloader` yourself (see above).
 - On iOS, ETag and Last-Modified are not recorded; resuming relies on the resume data iOS provides.
 - The public API may change before 1.0.
 

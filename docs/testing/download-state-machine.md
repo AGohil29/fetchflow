@@ -1,7 +1,7 @@
 # DownloadStateMachine Tests
 
 This document explains what
-[`DownloadStateMachineTest.kt`](../../downloader-core/src/commonTest/kotlin/com/arun/downloader/core/statemachine/DownloadStateMachineTest.kt)
+[`DownloadStateMachineTest.kt`](../../fetchflow-core/src/commonTest/kotlin/io/github/agohil29/fetchflow/core/statemachine/DownloadStateMachineTest.kt)
 verifies and how the `DownloadStateMachine` behaves, with concrete examples for each test.
 
 ## Under test
@@ -182,9 +182,9 @@ retrying.shouldBeInstanceOf<DownloadState.Connecting>()
 ## Running the tests
 
 ```bash
-./gradlew :downloader-core:allTests
+./gradlew :fetchflow-core:allTests
 # or, for a single target, e.g.:
-./gradlew :downloader-core:jvmTest --tests "com.arun.downloader.core.statemachine.DownloadStateMachineTest"
+./gradlew :fetchflow-core:jvmTest --tests "io.github.agohil29.fetchflow.core.statemachine.DownloadStateMachineTest"
 ```
 
 ## See also

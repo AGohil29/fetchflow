@@ -6,7 +6,7 @@ matches the [desktop sample](desktop-sample.md): pick one of the preset sample U
 image and a PDF — see [Sample URLs](desktop-sample.md#sample-urls)) or type your own, enqueue one
 or *Enqueue All Samples*, then pause, resume, retry and delete downloads from a live list.
 
-Source: `samples/sample-android/src/main/java/com/arun/downloader/sample/android/MainActivity.kt`
+Source: `samples/sample-android/src/main/java/io/github/agohil29/fetchflow/sample/android/MainActivity.kt`
 
 ## Module setup
 
@@ -19,9 +19,9 @@ include(":samples:sample-android")
 `samples/sample-android/build.gradle.kts`:
 
 - Plugins: `kotlin-android`, `android-application`, `compose-compiler` (version catalog).
-- `namespace`/`applicationId` `com.arun.downloader.sample.android`, `minSdk = 26`,
+- `namespace`/`applicationId` `io.github.agohil29.fetchflow.sample.android`, `minSdk = 26`,
   `compileSdk`/`targetSdk = 36`, Java/JVM target 17, Compose enabled.
-- Depends on `downloader-core`, `-filesystem`, `-storage`, `-network`, `-runtime`, plus
+- Depends on `fetchflow-core`, `-filesystem`, `-storage`, `-network`, `-runtime`, plus
   `sqldelight-driver-android`, `androidx-core-ktx`, `androidx-work-runtime-ktx`, `okio` and
   `ktor-client-okhttp`.
 
@@ -35,7 +35,7 @@ include(":samples:sample-android")
 
 | Step       | Implementation                                                                                                                                            |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Storage    | `AndroidSqliteDriver(DownloadDatabase.Schema, context, "downloader_sample.db")`, enum column adapters, `SqlDelightDownloadRepository` on `Dispatchers.IO` |
+| Storage    | `AndroidSqliteDriver(DownloadDatabase.Schema, context, "fetchflow_sample.db")`, enum column adapters, `SqlDelightDownloadRepository` on `Dispatchers.IO` |
 | Network    | `KtorNetworkTransport(HttpClient(OkHttp))`                                                                                                                |
 | Filesystem | `OkioDownloadFileSystem`                                                                                                                                  |
 | Config     | `DownloaderConfig(maxConcurrentDownloads = 3, stagingDirectory = filesDir)`                                                                               |
@@ -69,10 +69,10 @@ restart before the activity opens, the override is not set yet; set it in an `Ap
 
 ## Testing
 
-The Android-target `downloader-core` and `downloader-network` unit tests run on the host JVM:
+The Android-target `fetchflow-core` and `fetchflow-network` unit tests run on the host JVM:
 
 ```
-./gradlew :downloader-core:testDebugUnitTest :downloader-network:testDebugUnitTest
+./gradlew :fetchflow-core:testDebugUnitTest :fetchflow-network:testDebugUnitTest
 ```
 
 See [`progress-streaming.md`](../testing/progress-streaming.md) for the manual checks still

@@ -13,13 +13,10 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-// Published artifact base name: downloader-runtime -> kmp-file-downloader,
-// downloader-core -> kmp-file-downloader-core, etc. The plugin appends target suffixes itself
-// (-desktop, -android, -iosarm64, ...).
-val publishedBaseName = when (val n = project.name) {
-    "downloader-runtime" -> "kmp-file-downloader"
-    else -> "kmp-file-downloader-" + n.removePrefix("downloader-")
-}
+// Published artifact base name: fetchflow-runtime -> fetchflow; other modules keep their
+// project name (fetchflow-core, fetchflow-network, ...). The plugin appends target suffixes
+// itself (-desktop, -android, -iosarm64, ...).
+val publishedBaseName = if (project.name == "fetchflow-runtime") "fetchflow" else project.name
 
 // Ship the LICENSE inside META-INF of every published jar.
 tasks.withType<Jar>().configureEach {
@@ -53,10 +50,10 @@ mavenPublishing {
     )
 
     pom {
-        name.set("KMP File Downloader")
-        description.set("A resilient, production-grade Kotlin Multiplatform file downloader supporting Android, iOS, and Desktop.")
+        name.set("FetchFlow")
+        description.set("Resumable file downloads for Kotlin Multiplatform: Android, iOS and Desktop.")
         inceptionYear.set("2026")
-        url.set("https://github.com/AGohil29/kmp-file-downloader")
+        url.set("https://github.com/AGohil29/fetchflow")
 
         licenses {
             license {
@@ -75,9 +72,9 @@ mavenPublishing {
         }
 
         scm {
-            connection.set("scm:git:git://github.com/AGohil29/kmp-file-downloader.git")
-            developerConnection.set("scm:git:ssh://github.com/AGohil29/kmp-file-downloader.git")
-            url.set("https://github.com/AGohil29/kmp-file-downloader")
+            connection.set("scm:git:git://github.com/AGohil29/fetchflow.git")
+            developerConnection.set("scm:git:ssh://github.com/AGohil29/fetchflow.git")
+            url.set("https://github.com/AGohil29/fetchflow")
         }
     }
 }

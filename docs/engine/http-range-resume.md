@@ -4,14 +4,14 @@ This document covers the newest set of changes that teach `DownloadTask` how to 
 partially downloaded file** using HTTP byte-range requests, instead of always restarting from
 byte zero. It explains every file touched or added:
 
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/engine/RangeHeaderParser.kt` (new)
-- `downloader-core/src/commonMain/kotlin/com/arun/downloader/core/engine/DownloadTask.kt` (modified)
-- `downloader-runtime/src/desktopTest/kotlin/com/arun/downloader/runtime/engine/HttpRangeResumeTest.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/engine/RangeHeaderParser.kt` (new)
+- `fetchflow-core/src/commonMain/kotlin/io/github/agohil29/fetchflow/core/engine/DownloadTask.kt` (modified)
+- `fetchflow-runtime/src/desktopTest/kotlin/io/github/agohil29/fetchflow/runtime/engine/HttpRangeResumeTest.kt` (new)
 
 It builds directly on top of the design described in
 [`docs/engine/download-task.md`](download-task.md) and the range/resume fields already present in
 `NetworkRequest`/`NetworkResponse` (see
-[`docs/networking/downloader-network-module.md`](../networking/downloader-network-module.md)).
+[`docs/networking/fetchflow-network-module.md`](../networking/fetchflow-network-module.md)).
 Previously those fields existed on the wire types but `DownloadTask` never populated or acted on
 them — this change wires them up end-to-end.
 
@@ -229,7 +229,7 @@ short file, or the last chunk landed just after the last emitted tick), the pers
 final flush guarantees the state machine and repository both see the true final byte count
 (with `speedBytesPerSecond = 0` since the transfer has ended) before validation runs.
 
-## `HttpRangeResumeTest.kt` (new, in `downloader-runtime`)
+## `HttpRangeResumeTest.kt` (new, in `fetchflow-runtime`)
 
 A `desktopTest` suite (uses `JdbcSqliteDriver.IN_MEMORY` + `FakeFileSystem`, matching the pattern
 in `DownloadTaskTest`) that exercises the new logic end-to-end:

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <title>FetchFlow: resumable file downloads for Kotlin Multiplatform</title>
+  <defs>
+    <linearGradient id="bn-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A0F24"/>
+      <stop offset="1" stop-color="#101B3D"/>
+    </linearGradient>
+    <radialGradient id="bn-glow-v" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7C5CFF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#7C5CFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bn-glow-c" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bn-text" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9B85FF"/>
+      <stop offset="1" stop-color="#3FE0F5"/>
+    </linearGradient>
+    <linearGradient id="bn-wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7C5CFF" stop-opacity="0"/>
+      <stop offset="0.4" stop-color="#7C5CFF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0.75"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bn-bg)"/>
+  <circle cx="230" cy="150" r="360" fill="url(#bn-glow-v)"/>
+  <circle cx="1120" cy="560" r="380" fill="url(#bn-glow-c)"/>
+  <g fill="none" stroke="url(#bn-wave)" stroke-linecap="round">
+    <path d="M-20 560 C 260 470, 520 640, 820 545 S 1180 470, 1300 520" stroke-width="3"/>
+    <path d="M-20 590 C 300 510, 560 660, 860 575 S 1200 505, 1300 555" stroke-width="2" stroke-opacity="0.7"/>
+    <path d="M-20 618 C 340 550, 600 680, 900 605 S 1220 540, 1300 590" stroke-width="1.5" stroke-opacity="0.5"/>
+  </g>
+  <g transform="translate(40 18)">
+  <svg x="118" y="168" width="232" height="232" viewBox="0 0 512 512">
+    <defs>
+    <linearGradient id="ff-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="0.55" stop-color="#4F7BFF"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <linearGradient id="ff-shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="url(#ff-bg)"/>
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="url(#ff-shine)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <!-- side streams flowing into the arrow -->
+    <path d="M150 110 C150 196 240 176 252 252" stroke-width="30" stroke-opacity="0.62"/>
+    <path d="M362 110 C362 196 272 176 260 252" stroke-width="30" stroke-opacity="0.62"/>
+    <!-- arrow -->
+    <path d="M256 104 L256 336" stroke-width="34"/>
+    <path d="M190 276 L256 342 L322 276" stroke-width="34"/>
+    <!-- tray -->
+    <path d="M132 360 L132 382 Q132 414 164 414 L348 414 Q380 414 380 382 L380 360" stroke-width="30"/>
+  </g>
+
+  </svg>
+  <g font-family="Inter Display, Inter, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+    <text x="392" y="300" font-size="128" font-weight="800" letter-spacing="-3" fill="#FFFFFF">Fetch<tspan fill="url(#bn-text)">Flow</tspan></text>
+    <text x="398" y="358" font-size="31" font-weight="500" fill="#B9C3E6">Resumable file downloads for Kotlin Multiplatform</text>
+    <g font-size="22" font-weight="600" fill="#E6EBFF">
+      <rect x="398" y="392" width="128" height="44" rx="22" fill="#FFFFFF" fill-opacity="0.07" stroke="#9B85FF" stroke-opacity="0.55"/>
+      <text x="462" y="421" text-anchor="middle">Android</text>
+      <rect x="540" y="392" width="88" height="44" rx="22" fill="#FFFFFF" fill-opacity="0.07" stroke="#6E8BFF" stroke-opacity="0.55"/>
+      <text x="584" y="421" text-anchor="middle">iOS</text>
+      <rect x="642" y="392" width="134" height="44" rx="22" fill="#FFFFFF" fill-opacity="0.07" stroke="#3FE0F5" stroke-opacity="0.55"/>
+      <text x="709" y="421" text-anchor="middle">Desktop</text>
+    </g>
+  </g>
+  </g>
+</svg>

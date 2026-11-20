@@ -1,0 +1,15 @@
+package io.github.agohil29.fetchflow.storage.db
+
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
+
+actual class DatabaseDriverFactory(
+    private val dbName: String = "fetchflow.db"
+) {
+    actual fun createDriver(): SqlDriver {
+        return NativeSqliteDriver(
+            schema = DownloadDatabase.Schema,
+            name = dbName
+        )
+    }
+}

@@ -73,9 +73,9 @@ Validated on 2026-10-13:
   device. A system screen covered the activity, so rendered progress was not
   visually verified.
 
-Gradle tasks: `:downloader-core:desktopTest`, `:downloader-network:desktopTest`,
-`:downloader-storage:desktopTest`, `:downloader-runtime:desktopTest`,
-`:downloader-core:testDebugUnitTest`, `:downloader-network:testDebugUnitTest`,
+Gradle tasks: `:fetchflow-core:desktopTest`, `:fetchflow-network:desktopTest`,
+`:fetchflow-storage:desktopTest`, `:fetchflow-runtime:desktopTest`,
+`:fetchflow-core:testDebugUnitTest`, `:fetchflow-network:testDebugUnitTest`,
 `:samples:sample-desktop:compileKotlinDesktop`, and
 `:samples:sample-android:assembleDebug`.
 

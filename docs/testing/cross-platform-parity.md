@@ -1,6 +1,6 @@
 # Cross-Platform Parity Test
 
-**File:** `downloader-runtime/src/desktopTest/kotlin/com/arun/downloader/runtime/parity/CrossPlatformParityTest.kt`
+**File:** `fetchflow-runtime/src/desktopTest/kotlin/io/github/agohil29/fetchflow/runtime/parity/CrossPlatformParityTest.kt`
 
 ## Purpose
 
@@ -39,12 +39,12 @@ other targets.
 ## Running
 
 ```bash
-./gradlew :downloader-runtime:desktopTest --tests "com.arun.downloader.runtime.parity.CrossPlatformParityTest"
+./gradlew :fetchflow-runtime:desktopTest --tests "io.github.agohil29.fetchflow.runtime.parity.CrossPlatformParityTest"
 ```
 
 ## Related docs
 
 - [Download state machine tests](download-state-machine.md)
-- [Runtime module](../runtime/downloader-runtime-module.md)
+- [Runtime module](../runtime/fetchflow-runtime-module.md)
 - [Scheduler and FileDownloader](../scheduler/download-scheduler-and-file-downloader.md)
 
