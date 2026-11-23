@@ -79,6 +79,25 @@ mavenPublishing {
     }
 }
 
+// Keep the Maven Central bundle small. Maven Central counts every uploaded file against the
+// organization's monthly file limit, but only needs .md5 and .sha1 checksums for each artifact:
+// .sha256/.sha512 are optional and .asc signatures need no checksums at all
+// (https://central.sonatype.org/publish/requirements/). Gradle generates all of them, so trim
+// the plugin's staging repository (build/publishing/mavenCentral) right after each publish task;
+// the plugin zips that folder at the end of the build. This cuts one release from 1,700 to 680 files.
+val mavenCentralStagingDir = layout.buildDirectory.dir("publishing/mavenCentral")
+val unneededChecksum = Regex("""(\.sha256|\.sha512|\.asc\.md5|\.asc\.sha1)$""")
+tasks.withType<PublishToMavenRepository>().configureEach {
+    if (name.endsWith("ToMavenCentralRepository")) {
+        val stagingDir = mavenCentralStagingDir
+        doLast {
+            stagingDir.get().asFile.walkTopDown()
+                .filter { it.isFile && !it.name.startsWith("maven-metadata") && unneededChecksum.containsMatchIn(it.name) }
+                .forEach { it.delete() }
+        }
+    }
+}
+
 // Fail loudly instead of uploading unsigned artifacts that Central would reject anyway.
 val requireSigningKeyForRelease = tasks.register("requireSigningKeyForRelease") {
     val present = hasSigningKey
