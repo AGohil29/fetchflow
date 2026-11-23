@@ -6,9 +6,7 @@
 
 ### Resumable file downloads for Kotlin Multiplatform: Android, iOS and Desktop
 
-<!-- Add after the first release:
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.agohil29/fetchflow)](https://central.sonatype.com/artifact/io.github.agohil29/fetchflow)
--->
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Desktop-green)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF)
